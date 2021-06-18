@@ -1,0 +1,55 @@
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace Zad
+{
+    public partial class l_admin : Page
+    {
+       
+        public l_admin()
+        {
+            InitializeComponent();
+        }
+        public DataTable Select(string selectSQL)
+        {
+            DataTable dataTable = new DataTable("database");
+            SqlConnection sqlConnection = new SqlConnection(@"Data Source=DESKTOP-BFD1SKR\SQLEXPRESS;Initial Catalog=za;Integrated Security=True;");
+            sqlConnection.Open();
+            SqlCommand sqlCommand = sqlConnection.CreateCommand();
+            sqlCommand.CommandText = selectSQL;
+            SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
+            sqlDataAdapter.Fill(dataTable);
+            return dataTable;
+        }
+        private void login_Click(object sender, RoutedEventArgs e)
+        {
+            string Get_Data = "SELECT*FROM table WHERE login= '" + ft.Text + "'AND password = '" + fd.Password + "'";
+            if (ft.Text.Length>0)
+            {
+                if (fd.Password.Length > 0)
+                {
+                    DataTable table = Select(Get_Data);
+                    if (table.Rows.Count > 0)
+                    {
+                        Manager.main.Navigate(new m_admin());
+                    }
+                    else MessageBox.Show("Пользователь не найден");
+                }else MessageBox.Show("Введите пароль");
+            } else MessageBox.Show("Введите логин");
+        }
+    }
+}
